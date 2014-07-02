@@ -1,0 +1,23 @@
+{
+    "name": "ortic/css2less",
+    "description": "css to less converter",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Remo Laubacher",
+            "email": "remo.laubacher@ortic.com"
+        }
+    ],
+    "require": {
+        "sabberworm/php-css-parser": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ortic\\Css2Less\\": "src/"
+        }
+    }
+}
