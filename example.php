@@ -27,6 +27,11 @@ html p {
         height: 50px;
         background: white;
     }
+    p {
+        @font-face {
+            font-family: "CrassRoots";
+        }
+    }
 }
 
 @keyframes mymove {
@@ -35,8 +40,14 @@ html p {
 }
 EOF;
 
+//$cssContent = 'body {height: 100%;} body p {margin-top: 20px;margin-bottom: 20px;} body h1 {font-size: 20px;} @media print { p, blockquote {font-family: arial;} }';
 
+/*
 $css2lessParser = new \Ortic\Css2Less\Css2Less($cssContent);
 $lessTree = $css2lessParser->parse();
+echo $css2lessParser->formatAsLess($lessTree);
+*/
 
-echo '.'.$css2lessParser->formatAsLess($lessTree).'.';
+$css2lessParser = new \Ortic\Css2Less\Css2Less2($cssContent);
+echo $css2lessParser->getLess();
+
