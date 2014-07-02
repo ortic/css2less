@@ -37,7 +37,7 @@ class LessRuleList
                             $currentNode = & $currentNode[$selectorPathItem];
                         }
 
-                        $currentNode['@rules'] = $token;
+                        $currentNode['@rules'] = $this->formatTokenAsLess($token);
                     }
 
                 }
@@ -45,6 +45,42 @@ class LessRuleList
 
         }
         return $output;
+    }
+
+    public function formatTokenAsLess($token, $level = 0) {
+        $indentation = str_repeat("\t", $level);
+
+        if ($token instanceof \CssRulesetDeclarationToken) {
+            return $indentation . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+        }
+        elseif ($token instanceof \CssAtKeyframesStartToken) {
+            if ($token->AtRuleName === "-moz-keyframes")
+            {
+                return $indentation . "@-moz-keyframes " . $this->Name . " {";
+            }
+            return $indentation . "@" . $token->AtRuleName . " \"" . $token->Name . "\" {";
+        }
+        elseif ($token instanceof \CssAtKeyframesRulesetStartToken) {
+            return $indentation . "\t" . implode(",", $token->Selectors) . " {";
+        }
+        elseif ($token instanceof \CssAtKeyframesRulesetEndToken) {
+            return $indentation . "\t" . "}";
+        }
+        elseif ($token instanceof \CssAtKeyframesRulesetDeclarationToken) {
+            return $indentation . "\t\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+        }
+        elseif ($token instanceof \CssAtCharsetToken) {
+            return $indentation . "@charset " . $token->Charset . ";";
+        }
+        elseif ($token instanceof \CssAtFontFaceStartToken) {
+            return "@font-face {";
+        }
+        elseif ($token instanceof \CssAtFontFaceDeclarationToken) {
+            return $indentation . "\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+        }
+        else {
+            return $indentation . $token;
+        }
     }
 
     protected function formatAsLess($selector, $level = 0)
@@ -77,7 +113,7 @@ class LessRuleList
             if ($mediaType == 'all') {
                 $return .= $this->formatAsLess($node);
             } else {
-                $return .= "@{$mediaType} {\n";
+                $return .= "@media {$mediaType} {\n";
                 $return .= $this->formatAsLess($node, 1);
                 $return .= "}\n";
             }

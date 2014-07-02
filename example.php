@@ -27,11 +27,10 @@ html p {
         height: 50px;
         background: white;
     }
-    p {
-        @font-face {
-            font-family: "CrassRoots";
-        }
+    @font-face {
+        font-family: "CrassRoots";
     }
+
 }
 
 @keyframes mymove {

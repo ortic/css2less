@@ -66,7 +66,8 @@ class Css2Less2
 
         $return = '';
         foreach ($lessTree as $node) {
-            $return .= "{$node}\n";
+            // @TODO this format method shouldn't be in this class..
+            $return .= $ruleSetList->formatTokenAsLess($node) . "\n";
         }
 
         $return .= $ruleSetList->lessify();
