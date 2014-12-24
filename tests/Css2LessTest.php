@@ -48,6 +48,18 @@ EOF;
 
         $lessContent = <<<EOF
 @charset "utf-8";
+@font-face {
+	font-family: "CrassRoots";
+	src: url("../media/cr.ttf");
+}
+@keyframes "mymove" {
+	from {
+		top: 0px;
+	}
+	to {
+		top: 200px;
+	}
+}
 html {
 	font-size: 1.6em;
 	body {
@@ -57,10 +69,6 @@ html {
 		margin-bottom: 10px;
 		margin-top: 10px;
 	}
-}
-@font-face {
-	font-family: "CrassRoots";
-	src: url("../media/cr.ttf");
 }
 @media print {
 	#logo {
@@ -73,26 +81,16 @@ html {
 		}
 	}
 }
-@keyframes mymove {
-	from {
-		top: 0px;
-	}
-	to {
-		top: 200px;
-	}
-}
 
 EOF;
 
 
         $css2lessParser = new \Ortic\Css2Less\Css2Less($cssContent);
-        $lessTree = $css2lessParser->parse();
+        $lessOutput = $css2lessParser->getLess();
 
-        $lessOutput = $css2lessParser->formatAsLess($lessTree);
         $lessOutput = $this->normalizeLineEndings($lessOutput);
         $lessContent = $this->normalizeLineEndings($lessContent);
 
         $this->assertEquals($lessOutput, $lessContent);
     }
 }
- 

@@ -10,7 +10,6 @@
         }
     ],
     "require": {
-        "sabberworm/php-css-parser": "dev-master",
         "natxet/cssmin": "~3.0"
     },
     "require-dev": {
