@@ -22,7 +22,7 @@ class LessRuleList
                 foreach ($token->MediaTypes as $mediaType) {
                     // make sure we're aware of our media type
                     if (!array_key_exists($mediaType, $output)) {
-                        $output[$mediaType] = [];
+                        $output[$mediaType] = array();
                     }
 
                     // add declaration token to output for each selector
