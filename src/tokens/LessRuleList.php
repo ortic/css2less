@@ -96,7 +96,7 @@ class LessRuleList
                         $return .= $indentation . "\t" . $subNode . "\n";
                     }
                 } else {
-                    $return .= $this->formatAsLess([$subNodeKey => $subNodes], $level + 1);
+                    $return .= $this->formatAsLess(array($subNodeKey => $subNodes), $level + 1);
                 }
             }
 
