@@ -4,7 +4,7 @@ namespace Ortic\Css2Less\tokens;
 
 class LessRuleList
 {
-    private $list = [];
+    private $list = array();
 
     public function addRule($rule)
     {
@@ -13,7 +13,7 @@ class LessRuleList
 
     protected function getTree()
     {
-        $output = [];
+        $output = array();
 
         foreach ($this->list as $ruleSet) {
             $selectors = $ruleSet->getSelectors();

@@ -15,7 +15,7 @@ class CssSelector
     /**
      * @var CssSelector[] $childSelectors
      */
-    protected $childSelectors = [];
+    protected $childSelectors = array();
 
     /**
      * @param string $selector the selector name

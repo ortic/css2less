@@ -24,7 +24,7 @@ class Css2Less
 
     public function getLess()
     {
-        $lessTree = [];
+        $lessTree = array();
 
         // this variable is true, if we're within a ruleset, e.g. p { .. here .. }
         // we have to normalize them
