@@ -37,7 +37,7 @@ class LessRuleList
                             $currentNode = & $currentNode[$selectorPathItem];
                         }
 
-                        $currentNode['@rules'] = $this->formatTokenAsLess($token);
+                        $currentNode['@rules'][] = $this->formatTokenAsLess($token);
                     }
 
                 }
@@ -92,7 +92,9 @@ class LessRuleList
 
             foreach ($node as $subNodeKey => $subNodes) {
                 if ($subNodeKey === '@rules') {
-                    $return .= $indentation . "\t" . $subNodes . "\n";
+                    foreach ($subNodes as $subNode) {
+                        $return .= $indentation . "\t" . $subNode . "\n";
+                    }
                 } else {
                     $return .= $this->formatAsLess([$subNodeKey => $subNodes], $level + 1);
                 }
