@@ -4,8 +4,8 @@ namespace Ortic\Css2Less\tokens;
 
 class LessRule
 {
-    private $selectors = [];
-    private $tokens = [];
+    private $selectors = array();
+    private $tokens = array();
 
     public function __construct($selectors) {
         $this->selectors = $selectors;
