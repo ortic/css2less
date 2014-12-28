@@ -32,7 +32,7 @@ class LessRuleList
 
                         foreach ($selectorPath as $selectorPathItem) {
                             if (!array_key_exists($selectorPathItem, $currentNode)) {
-                                $currentNode[$selectorPathItem] = [];
+                                $currentNode[$selectorPathItem] = array();
                             }
                             $currentNode = & $currentNode[$selectorPathItem];
                         }
