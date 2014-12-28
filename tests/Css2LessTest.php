@@ -39,7 +39,10 @@ html p {
         background: white;
     }
 }
-
+@-moz-keyframes mymozmove{
+    from { top: 0px; }
+    to { top: 200px; }
+}
 @keyframes mymove {
     from { top: 0px; }
     to { top: 200px; }
@@ -51,6 +54,14 @@ EOF;
 @font-face {
 	font-family: "CrassRoots";
 	src: url("../media/cr.ttf");
+}
+@-moz-keyframes "mymozmove" {
+	from {
+		top: 0px;
+	}
+	to {
+		top: 200px;
+	}
 }
 @keyframes "mymove" {
 	from {

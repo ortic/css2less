@@ -2,27 +2,48 @@
 
 namespace Ortic\Css2Less\tokens;
 
+/**
+ * Class LessRule
+ * @package Ortic\Css2Less\tokens
+ */
 class LessRule
 {
     private $selectors = array();
     private $tokens = array();
 
-    public function __construct($selectors) {
+    /**
+     * @param $selectors
+     */
+    public function __construct($selectors)
+    {
         $this->selectors = $selectors;
     }
 
-    public function addToken($token) {
+    /**
+     * Add new node to rule
+     * @param $token
+     */
+    public function addToken($token)
+    {
         $this->tokens[] = $token;
     }
 
-    public function getSelectors() {
+    /**
+     * Returns the list of selectors (e.g. #logo img)
+     * @return array
+     */
+    public function getSelectors()
+    {
         return $this->selectors;
     }
 
-    public function getTokens() {
+    /**
+     * Returns a list of tokens/nodes for the current selector
+     * @return array
+     */
+    public function getTokens()
+    {
         return $this->tokens;
     }
 
-    public function __toString() {
-    }
 }

@@ -2,15 +2,27 @@
 
 namespace Ortic\Css2Less\tokens;
 
+/**
+ * Class LessRuleList
+ * @package Ortic\Css2Less\tokens
+ */
 class LessRuleList
 {
     private $list = array();
 
-    public function addRule($rule)
+    /**
+     * Add a new rule object to our list
+     * @param LessRule $rule
+     */
+    public function addRule(LessRule $rule)
     {
         $this->list[] = $rule;
     }
 
+    /**
+     * Build and returns a tree for the CSS input
+     * @return array
+     */
     protected function getTree()
     {
         $output = array();
@@ -26,7 +38,7 @@ class LessRuleList
                     }
 
                     // add declaration token to output for each selector
-                    $currentNode = & $output[$mediaType];
+                    $currentNode = &$output[$mediaType];
                     foreach ($selectors as $selector) {
                         $selectorPath = preg_split('[ ]', $selector, -1, PREG_SPLIT_NO_EMPTY);
 
@@ -34,7 +46,7 @@ class LessRuleList
                             if (!array_key_exists($selectorPathItem, $currentNode)) {
                                 $currentNode[$selectorPathItem] = array();
                             }
-                            $currentNode = & $currentNode[$selectorPathItem];
+                            $currentNode = &$currentNode[$selectorPathItem];
                         }
 
                         $currentNode['@rules'][] = $this->formatTokenAsLess($token);
@@ -47,38 +59,36 @@ class LessRuleList
         return $output;
     }
 
-    public function formatTokenAsLess($token, $level = 0) {
+    /**
+     * Format LESS nodes in a nicer way with indentation and proper brackets
+     * @param $token
+     * @param int $level
+     * @return string
+     */
+    public function formatTokenAsLess(\aCssToken $token, $level = 0)
+    {
         $indentation = str_repeat("\t", $level);
 
         if ($token instanceof \CssRulesetDeclarationToken) {
             return $indentation . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
-        }
-        elseif ($token instanceof \CssAtKeyframesStartToken) {
-            if ($token->AtRuleName === "-moz-keyframes")
-            {
-                return $indentation . "@-moz-keyframes " . $this->Name . " {";
+        } elseif ($token instanceof \CssAtKeyframesStartToken) {
+            if ($token->AtRuleName === "-moz-keyframes") {
+                return $indentation . "@-moz-keyframes \"" . $token->Name . "\" {";
             }
             return $indentation . "@" . $token->AtRuleName . " \"" . $token->Name . "\" {";
-        }
-        elseif ($token instanceof \CssAtKeyframesRulesetStartToken) {
+        } elseif ($token instanceof \CssAtKeyframesRulesetStartToken) {
             return $indentation . "\t" . implode(",", $token->Selectors) . " {";
-        }
-        elseif ($token instanceof \CssAtKeyframesRulesetEndToken) {
+        } elseif ($token instanceof \CssAtKeyframesRulesetEndToken) {
             return $indentation . "\t" . "}";
-        }
-        elseif ($token instanceof \CssAtKeyframesRulesetDeclarationToken) {
+        } elseif ($token instanceof \CssAtKeyframesRulesetDeclarationToken) {
             return $indentation . "\t\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
-        }
-        elseif ($token instanceof \CssAtCharsetToken) {
+        } elseif ($token instanceof \CssAtCharsetToken) {
             return $indentation . "@charset " . $token->Charset . ";";
-        }
-        elseif ($token instanceof \CssAtFontFaceStartToken) {
+        } elseif ($token instanceof \CssAtFontFaceStartToken) {
             return "@font-face {";
-        }
-        elseif ($token instanceof \CssAtFontFaceDeclarationToken) {
+        } elseif ($token instanceof \CssAtFontFaceDeclarationToken) {
             return $indentation . "\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
-        }
-        else {
+        } else {
             return $indentation . $token;
         }
     }

@@ -8,20 +8,31 @@ use Ortic\Css2Less\tokens\LessRule;
 class Css2Less
 {
     /**
-     * @var string $cssContent ;
+     * @var string $cssContent
      */
     protected $cssContent;
+
     /**
      * @var CssParser $parser
      */
     protected $parser;
 
+    /**
+     * Create a new parser object, use parameter to specify CSS you
+     * wish to convert into a LESS file
+     *
+     * @param string $cssContent
+     */
     public function __construct($cssContent)
     {
         $this->cssContent = $cssContent;
         $this->parser = new \CssParser($this->cssContent);
     }
 
+    /**
+     * Returns a string containing the LESS content matching the CSS input
+     * @return string
+     */
     public function getLess()
     {
         $lessTree = array();
@@ -37,7 +48,8 @@ class Css2Less
         foreach ($tokens as $token) {
             // we have to skip some tokens, their information is redundant
             if ($token instanceof \CssAtMediaStartToken ||
-                $token instanceof \CssAtMediaEndToken) {
+                $token instanceof \CssAtMediaEndToken
+            ) {
                 continue;
             }
 
@@ -45,20 +57,17 @@ class Css2Less
             if ($token instanceof \CssRulesetStartToken) {
                 $withinRulset = true;
                 $ruleSet = new LessRule($token->Selectors);
-            }
-            elseif ($token instanceof \CssRulesetEndToken) {
+            } elseif ($token instanceof \CssRulesetEndToken) {
                 $withinRulset = false;
                 $ruleSetList->addRule($ruleSet);
                 $ruleSet = null;
-            }
-            else {
+            } else {
                 // as long as we're in a ruleset, we're adding all token to a custom array
                 // this will be lessified once we've found CssRulesetEndToken and then added
                 // to the actual $lessTree variable
                 if ($withinRulset) {
                     $ruleSet->addToken($token);
-                }
-                else {
+                } else {
                     $lessTree[] = $token;
                 }
             }
@@ -73,15 +82,6 @@ class Css2Less
         $return .= $ruleSetList->lessify();
 
         return $return;
-    }
-
-    protected function groupRules(array $tokens) {
-        $lessRulesResult = new LessRules();
-
-        $lessRulesResult->addRule('a');
-
-        return $lessRulesResult;
-
     }
 
 }
