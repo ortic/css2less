@@ -13,7 +13,7 @@ class Css2Less
     protected $cssContent;
 
     /**
-     * @var CssParser $parser
+     * @var \CssParser $parser
      */
     protected $parser;
 
@@ -59,7 +59,9 @@ class Css2Less
                 $ruleSet = new LessRule($token->Selectors);
             } elseif ($token instanceof \CssRulesetEndToken) {
                 $withinRulset = false;
-                $ruleSetList->addRule($ruleSet);
+                if ($ruleSet) {
+                    $ruleSetList->addRule($ruleSet);
+                }
                 $ruleSet = null;
             } else {
                 // as long as we're in a ruleset, we're adding all token to a custom array
