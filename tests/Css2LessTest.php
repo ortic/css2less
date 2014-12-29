@@ -11,6 +11,28 @@ class Css2LessTest extends PHPUnit_Framework_TestCase
         return $input;
     }
 
+    public function providerSnippets()
+    {
+        return array(
+            array('html p { font-size: 12px; }', "html {\n\tp {\n\t\tfont-size: 12px;\n\t}\n}\n"),
+            array('html, body { margin: 0; }', "html {\n\tmargin: 0;\n}\nbody {\n\tmargin: 0;\n}\n"),
+        );
+    }
+
+    /**
+     * @dataProvider providerSnippets
+     */
+    public function testSnippets($css, $less)
+    {
+        $css2lessParser = new \Ortic\Css2Less\Css2Less($css);
+        $lessOutput = $css2lessParser->getLess();
+
+        $lessOutput = $this->normalizeLineEndings($lessOutput);
+        $lessContent = $this->normalizeLineEndings($less);
+
+        $this->assertEquals($lessOutput, $lessContent);
+    }
+
     public function testParseSimpleFile()
     {
         $cssContent = <<<EOF
@@ -73,13 +95,13 @@ EOF;
 }
 html {
 	font-size: 1.6em;
-	body {
-		font-size: 1.6em;
-	}
 	p {
 		margin-bottom: 10px;
 		margin-top: 10px;
 	}
+}
+body {
+	font-size: 1.6em;
 }
 @media print {
 	#logo {

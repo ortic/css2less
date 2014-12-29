@@ -51,9 +51,12 @@ class LessRuleList
                 $output[$mediaType] = array();
             }
 
-            // add declaration token to output for each selector
-            $currentNode = &$output[$mediaType];
             foreach ($selectors as $selector) {
+                // add declaration token to output for each selector
+                $currentNode = &$output[$mediaType];
+
+                // selectors like "html body" must be split into an array so we can
+                // easily nest them
                 $selectorPath = preg_split('[ ]', $selector, -1, PREG_SPLIT_NO_EMPTY);
 
                 foreach ($selectorPath as $selectorPathItem) {
