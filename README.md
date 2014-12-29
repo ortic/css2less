@@ -8,3 +8,24 @@ css2less
 this library aims to convert CSS files into LESS files.
 
 Currently used by http://www.css2less.net/
+
+example
+=======
+
+The code below takes a few CSS instructions and prints them in a more LESS like form:
+
+```php
+$cssContent = 'body p { font-family: arial; }';
+$css2lessParser = new \Ortic\Css2Less\Css2Less($cssContent);
+echo $css2lessParser->getLess();
+```
+
+output:
+
+```
+body {
+        p {
+                font-family: arial;
+        }
+}
+```
