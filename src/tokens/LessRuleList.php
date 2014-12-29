@@ -31,32 +31,41 @@ class LessRuleList
             $selectors = $ruleSet->getSelectors();
 
             foreach ($ruleSet->getTokens() as $token) {
-                foreach ($token->MediaTypes as $mediaType) {
-                    // make sure we're aware of our media type
-                    if (!array_key_exists($mediaType, $output)) {
-                        $output[$mediaType] = array();
-                    }
-
-                    // add declaration token to output for each selector
-                    $currentNode = &$output[$mediaType];
-                    foreach ($selectors as $selector) {
-                        $selectorPath = preg_split('[ ]', $selector, -1, PREG_SPLIT_NO_EMPTY);
-
-                        foreach ($selectorPath as $selectorPathItem) {
-                            if (!array_key_exists($selectorPathItem, $currentNode)) {
-                                $currentNode[$selectorPathItem] = array();
-                            }
-                            $currentNode = &$currentNode[$selectorPathItem];
-                        }
-
-                        $currentNode['@rules'][] = $this->formatTokenAsLess($token);
-                    }
-
-                }
+                $this->parseTreeNode($output, $selectors, $token);
             }
-
         }
         return $output;
+    }
+
+    /**
+     * Parse CSS input part into a LESS node
+     * @param $output
+     * @param $selectors
+     * @param $token
+     */
+    protected function parseTreeNode(&$output, $selectors, $token)
+    {
+        foreach ($token->MediaTypes as $mediaType) {
+            // make sure we're aware of our media type
+            if (!array_key_exists($mediaType, $output)) {
+                $output[$mediaType] = array();
+            }
+
+            // add declaration token to output for each selector
+            $currentNode = &$output[$mediaType];
+            foreach ($selectors as $selector) {
+                $selectorPath = preg_split('[ ]', $selector, -1, PREG_SPLIT_NO_EMPTY);
+
+                foreach ($selectorPath as $selectorPathItem) {
+                    if (!array_key_exists($selectorPathItem, $currentNode)) {
+                        $currentNode[$selectorPathItem] = array();
+                    }
+                    $currentNode = &$currentNode[$selectorPathItem];
+                }
+
+                $currentNode['@rules'][] = $this->formatTokenAsLess($token);
+            }
+        }
     }
 
     /**
@@ -72,9 +81,6 @@ class LessRuleList
         if ($token instanceof \CssRulesetDeclarationToken) {
             return $indentation . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
         } elseif ($token instanceof \CssAtKeyframesStartToken) {
-            if ($token->AtRuleName === "-moz-keyframes") {
-                return $indentation . "@-moz-keyframes \"" . $token->Name . "\" {";
-            }
             return $indentation . "@" . $token->AtRuleName . " \"" . $token->Name . "\" {";
         } elseif ($token instanceof \CssAtKeyframesRulesetStartToken) {
             return $indentation . "\t" . implode(",", $token->Selectors) . " {";
