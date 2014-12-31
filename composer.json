@@ -22,5 +22,9 @@
         "psr-4": {
             "Ortic\\Css2Less\\": "src/"
         }
-    }
+    },
+    "bin": [
+        "bin/css2less.bat",
+        "bin/css2less"
+    ]
 }
