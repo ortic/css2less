@@ -38,6 +38,58 @@ class LessRuleList
     }
 
     /**
+     * Add support for direct descendants operator by aligning the spaces properly.
+     * the code below supports "html >p" since we split by spaces. A selector "html > p" would cause an
+     * additional tree level, we therefore normalize them with the two lines below.
+     *
+     * @param string $selector
+     * @return string
+     */
+    protected function parseDirectDescendants($selector)
+    {
+        $selector = str_replace('> ', '>', $selector);
+        $selector = str_replace('>', ' >', $selector);
+        return $selector;
+    }
+
+    /**
+     * Support for pseudo classes by adding a space before ":" and also "&" to let less know that there
+     * shouldn't be a space when concatenating the nested selectors to a single css rule. We have to
+     * ignore every colon if it's wrapped by :not(...) as we don't nest this in LESS.
+     *
+     * @param string $selector
+     * @return string
+     */
+    protected function parsePseudoClasses($selector)
+    {
+        $nestedPseudo = false;
+        $lastCharacterColon = false;
+        $selectorOut = '';
+        for ($i = 0; $i < strlen($selector); $i++) {
+            $c = $selector{$i};
+
+            // Don't parse anything between (..) and [..]
+            if ($c === '(' || $c === '[') {
+                $nestedPseudo = true;
+            }
+            if ($c === ')' || $c === ']') {
+                $nestedPseudo = false;
+            }
+
+            if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
+                $selectorOut .= ' &';
+                $lastCharacterColon = true;
+            }
+            else {
+                $lastCharacterColon = false;
+            }
+
+            $selectorOut .= $c;
+        }
+        return $selectorOut;
+    }
+
+    /**
      * Parse CSS input part into a LESS node
      * @param $output
      * @param $selectors
@@ -55,38 +107,8 @@ class LessRuleList
                 // add declaration token to output for each selector
                 $currentNode = &$output[$mediaType];
 
-                // add support for direct descendants operator by aligning the spaces properly.
-                // the code below supports "html >p" since we split by spaces. A selector "html > p" would cause an
-                // additional tree level, we therefore normalize them with the two lines below.
-                $selector = str_replace('> ', '>', $selector);
-                $selector = str_replace('>', ' >', $selector);
-
-                // support for pseudo classes by adding a space before ":" and also "&" to let less know that there
-                // shouldn't be a space when concatenating the nested selectors to a single css rule. We have to
-                // ignore every colon if it's wrapped by :not(...) as we don't nest this in LESS.
-                $nestedPseudo = false;
-                $lastCharacterColon = false;
-                $selectorOut = '';
-                for ($i = 0; $i < strlen($selector); $i++) {
-                    $c = $selector{$i};
-                    if ($c === '(' || $c === '[') {
-                        $nestedPseudo = true;
-                    }
-                    if ($c === ')' || $c === ']') {
-                        $nestedPseudo = false;
-                    }
-
-                    if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
-                        $selectorOut .= ' &';
-                        $lastCharacterColon = true;
-                    }
-                    else {
-                        $lastCharacterColon = false;
-                    }
-
-                    $selectorOut .= $c;
-                }
-                $selector = $selectorOut;
+                $selector = $this->parseDirectDescendants($selector);
+                $selector = $this->parsePseudoClasses($selector);
 
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
