@@ -69,12 +69,8 @@ class LessRuleList
             $c = $selector{$i};
 
             // Don't parse anything between (..) and [..]
-            if ($c === '(' || $c === '[') {
-                $nestedPseudo = true;
-            }
-            if ($c === ')' || $c === ']') {
-                $nestedPseudo = false;
-            }
+            $nestedPseudo = ($c === '(' || $c === '[') || $nestedPseudo;
+            $nestedPseudo = !($c === ')' || $c === ']') && $nestedPseudo;
 
             if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
                 $selectorOut .= ' &';
