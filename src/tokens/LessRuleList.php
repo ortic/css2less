@@ -65,6 +65,7 @@ class LessRuleList
                 // shouldn't be a space when concatenating the nested selectors to a single css rule. We have to
                 // ignore every colon if it's wrapped by :not(...) as we don't nest this in LESS.
                 $nestedPseudo = false;
+                $lastCharacterColon = false;
                 $selectorOut = '';
                 for ($i = 0; $i < strlen($selector); $i++) {
                     $c = $selector{$i};
@@ -75,14 +76,17 @@ class LessRuleList
                         $nestedPseudo = false;
                     }
 
-                    if ($nestedPseudo === false && $c === ':') {
+                    if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
                         $selectorOut .= ' &';
+                        $lastCharacterColon = true;
+                    }
+                    else {
+                        $lastCharacterColon = false;
                     }
 
                     $selectorOut .= $c;
                 }
                 $selector = $selectorOut;
-
 
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
