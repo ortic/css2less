@@ -62,8 +62,31 @@ class LessRuleList
                 $selector = str_replace('>', ' >', $selector);
 
                 // support for pseudo classes by adding a space before ":" and also "&" to let less know that there
-                // shouldn't be a space when concatenating the nested selectors to a single css rule.
-                $selector = str_replace(':', ' &:', $selector);
+                // shouldn't be a space when concatenating the nested selectors to a single css rule. We have to
+                // ignore every colon if it's wrapped by :not(...) as we don't nest this in LESS.
+                $nestedPseudo = false;
+                $lastCharacterColon = false;
+                $selectorOut = '';
+                for ($i = 0; $i < strlen($selector); $i++) {
+                    $c = $selector{$i};
+                    if ($c === '(' || $c === '[') {
+                        $nestedPseudo = true;
+                    }
+                    if ($c === ')' || $c === ']') {
+                        $nestedPseudo = false;
+                    }
+
+                    if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
+                        $selectorOut .= ' &';
+                        $lastCharacterColon = true;
+                    }
+                    else {
+                        $lastCharacterColon = false;
+                    }
+
+                    $selectorOut .= $c;
+                }
+                $selector = $selectorOut;
 
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
