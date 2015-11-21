@@ -19,6 +19,7 @@ class Css2LessTest extends PHPUnit_Framework_TestCase
             array('html> p { font-size: 12px; }', "html {\n\t>p {\n\t\tfont-size: 12px;\n\t}\n}\n"),
             array('html>p { font-size: 12px; }', "html {\n\t>p {\n\t\tfont-size: 12px;\n\t}\n}\n"),
             array('html, body { margin: 0; }', "html {\n\tmargin: 0;\n}\nbody {\n\tmargin: 0;\n}\n"),
+            array('a:hover { text-decoration: none; }', "a {\n\t&:hover {\n\t\ttext-decoration: none;\n\t}\n}\n"),
         );
     }
 

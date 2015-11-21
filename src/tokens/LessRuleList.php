@@ -61,6 +61,10 @@ class LessRuleList
                 $selector = str_replace('> ', '>', $selector);
                 $selector = str_replace('>', ' >', $selector);
 
+                // support for pseudo classes by adding a space before ":" and also "&" to let less know that there
+                // shouldn't be a space when concatenating the nested selectors to a single css rule.
+                $selector = str_replace(':', ' &:', $selector);
+
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
                 $selectorPath = preg_split('[ ]', $selector, -1, PREG_SPLIT_NO_EMPTY);
