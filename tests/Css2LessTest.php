@@ -21,6 +21,7 @@ class Css2LessTest extends PHPUnit_Framework_TestCase
             array('html, body { margin: 0; }', "html {\n\tmargin: 0;\n}\nbody {\n\tmargin: 0;\n}\n"),
             array('a:hover { text-decoration: none; }', "a {\n\t&:hover {\n\t\ttext-decoration: none;\n\t}\n}\n"),
             array('button::-moz-focus-inner { border: 0; }', "button {\n\t&::-moz-focus-inner {\n\t\tborder: 0;\n\t}\n}\n"),
+            array('a[href^="javascript:"]:after { border: 0; }', "a[href^=\"javascript:\"] {\n\t&:after {\n\t\tborder: 0;\n\t}\n}\n"),
         );
     }
 

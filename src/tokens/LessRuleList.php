@@ -69,10 +69,10 @@ class LessRuleList
                 $selectorOut = '';
                 for ($i = 0; $i < strlen($selector); $i++) {
                     $c = $selector{$i};
-                    if ($c == '(') {
+                    if ($c === '(' || $c === '[') {
                         $nestedPseudo = true;
                     }
-                    if ($c == ')') {
+                    if ($c === ')' || $c === ']') {
                         $nestedPseudo = false;
                     }
 
