@@ -45,5 +45,4 @@ class LessRule
     {
         return $this->tokens;
     }
-
 }
