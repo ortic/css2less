@@ -68,14 +68,12 @@ class Css2Less
         }
 
         foreach ($this->tokens as $token) {
-            if ($token instanceof \CssRulesetDeclarationToken) {
-                if (in_array($token->Property, $properties)) {
-                    if (!array_key_exists($token->Value, $this->variables[$token->Property])) {
-                        $this->variables[$token->Property][$token->Value] = $token->Property . '_' . (count($this->variables[$token->Property]) + 1);
+            if ($token instanceof \CssRulesetDeclarationToken && in_array($token->Property, $properties)) {
+                if (!array_key_exists($token->Value, $this->variables[$token->Property])) {
+                    $this->variables[$token->Property][$token->Value] = $token->Property . '_' . (count($this->variables[$token->Property]) + 1);
 
-                    }
-                    $token->Value = '$' . $this->variables[$token->Property][$token->Value];
                 }
+                $token->Value = '@' . $this->variables[$token->Property][$token->Value];
             }
         }
     }
@@ -90,7 +88,7 @@ class Css2Less
         $return = '';
         foreach ($this->variables as $properties) {
             foreach ($properties as $variable => $property) {
-                $return .= "\${$property}: {$variable};\n";
+                $return .= "@{$property}: {$variable};\n";
             }
         }
         $return .= "\n";
