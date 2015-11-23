@@ -18,6 +18,34 @@ class Css2Less
     protected $parser;
 
     /**
+     * Tokens.
+     *
+     * @var array
+     */
+    protected $tokens = [];
+
+    /**
+     * Nested CSS tree
+     *
+     * @var array
+     */
+    protected $lessTree = [];
+
+    /**
+     * List of CSS rules
+     *
+     * @var LessRuleList
+     */
+    protected $ruleSetList;
+
+    /**
+     * Variables.
+     *
+     * @var array
+     */
+    protected $variables = [];
+
+    /**
      * Create a new parser object, use parameter to specify CSS you
      * wish to convert into a LESS file
      *
@@ -30,22 +58,90 @@ class Css2Less
     }
 
     /**
+     * Iterates through all tokens and extracts the values into variables
+     */
+    protected function extractVariables()
+    {
+        $properties = ['color', 'font-family'];
+        foreach ($properties as $property) {
+            $this->variables[$property] = [];
+        }
+
+        foreach ($this->tokens as $token) {
+            if ($token instanceof \CssRulesetDeclarationToken) {
+                if (in_array($token->Property, $properties)) {
+                    if (!array_key_exists($token->Value, $this->variables[$token->Property])) {
+                        $this->variables[$token->Property][$token->Value] = $token->Property . '_' . (count($this->variables[$token->Property]) + 1);
+
+                    }
+                    $token->Value = '$' . $this->variables[$token->Property][$token->Value];
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a string containing all variables to be printed in the output
+     *
+     * @return string
+     */
+    protected function getVariables()
+    {
+        $return = '';
+        foreach ($this->variables as $properties) {
+            foreach ($properties as $variable => $property) {
+                $return .= "\${$property}: {$variable};\n";
+            }
+        }
+        $return .= "\n";
+        return $return;
+    }
+
+    /**
      * Returns a string containing the LESS content matching the CSS input
      * @return string
      */
-    public function getLess()
+    public function getLess($extractVariables = false)
     {
-        $lessTree = array();
 
+        $this->tokens = $this->parser->getTokens();
+
+        // extract variables
+        if ($extractVariables) {
+            $this->extractVariables();
+        }
+
+        $this->buildNestedTree();
+
+        $return = '';
+
+        // print variables
+        if ($extractVariables) {
+            $return .= $this->getVariables();
+        }
+
+        foreach ($this->lessTree as $node) {
+            // @TODO this format method shouldn't be in this class..
+            $return .= $this->ruleSetList->formatTokenAsLess($node) . "\n";
+        }
+
+        $return .= $this->ruleSetList->lessify();
+
+        return $return;
+    }
+
+    /**
+     * Build a nested tree based on the flat CSS tokens
+     */
+    protected function buildNestedTree()
+    {
         // this variable is true, if we're within a ruleset, e.g. p { .. here .. }
         // we have to normalize them
         $withinRulset = false;
         $ruleSet = null;
-        $ruleSetList = new LessRuleList();
+        $this->ruleSetList = new LessRuleList();
 
-        $tokens = $this->parser->getTokens();
-
-        foreach ($tokens as $token) {
+        foreach ($this->tokens as $token) {
             // we have to skip some tokens, their information is redundant
             if ($token instanceof \CssAtMediaStartToken ||
                 $token instanceof \CssAtMediaEndToken
@@ -60,7 +156,7 @@ class Css2Less
             } elseif ($token instanceof \CssRulesetEndToken) {
                 $withinRulset = false;
                 if ($ruleSet) {
-                    $ruleSetList->addRule($ruleSet);
+                    $this->ruleSetList->addRule($ruleSet);
                 }
                 $ruleSet = null;
             } else {
@@ -70,19 +166,9 @@ class Css2Less
                 if ($withinRulset) {
                     $ruleSet->addToken($token);
                 } else {
-                    $lessTree[] = $token;
+                    $this->lessTree[] = $token;
                 }
             }
         }
-
-        $return = '';
-        foreach ($lessTree as $node) {
-            // @TODO this format method shouldn't be in this class..
-            $return .= $ruleSetList->formatTokenAsLess($node) . "\n";
-        }
-
-        $return .= $ruleSetList->lessify();
-
-        return $return;
     }
 }
