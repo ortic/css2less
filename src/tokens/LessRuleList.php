@@ -85,6 +85,28 @@ class LessRuleList
         return $selectorOut;
     }
 
+    protected function parseAdjacentSelect($selector)
+    {
+        $selectorOut = '';
+        $adjacentSelectorFound = false;
+        for ($i = 0; $i < strlen($selector); $i++) {
+            $c = $selector{$i};
+            if ($c == ' ' && $adjacentSelectorFound) {
+                continue;
+            }
+            else {
+                $adjacentSelectorFound = false;
+            }
+            if ($c == '+') {
+                $selectorOut .= '&';
+                $adjacentSelectorFound = true;
+            }
+            $selectorOut .= $c;
+        }
+
+        return $selectorOut;
+    }
+
     /**
      * Parse CSS input part into a LESS node
      * @param $output
@@ -105,6 +127,7 @@ class LessRuleList
 
                 $selector = $this->parseDirectDescendants($selector);
                 $selector = $this->parsePseudoClasses($selector);
+                $selector = $this->parseAdjacentSelect($selector);
 
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
