@@ -115,6 +115,10 @@ class LessRuleList
      */
     protected function parseTreeNode(&$output, $selectors, $token)
     {
+        // we don't parse comments
+        if ($token instanceof \CssCommentToken) {
+            return;
+        }
         foreach ($token->MediaTypes as $mediaType) {
             // make sure we're aware of our media type
             if (!array_key_exists($mediaType, $output)) {
