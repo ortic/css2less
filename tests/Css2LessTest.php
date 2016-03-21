@@ -23,6 +23,7 @@ class Css2LessTest extends PHPUnit_Framework_TestCase
             array('button::-moz-focus-inner { border: 0; }', "button {\n\t&::-moz-focus-inner {\n\t\tborder: 0;\n\t}\n}\n", false),
             array('a[href^="javascript:"]:after { border: 0; }', "a[href^=\"javascript:\"] {\n\t&:after {\n\t\tborder: 0;\n\t}\n}\n", false),
             array('a { color: white; }', "@color_1: white;\n\na {\n\tcolor: @color_1;\n}\n", true),
+            array('a { color: white; } body { background-color: white; }', "@color_1: white;\n@background_color_1: white;\n\na {\n\tcolor: @color_1;\n}\nbody {\n\tbackground-color: @background_color_1;\n}\n", true),
             array('p + p { font-size: 12px; }', "p {\n\t&+p {\n\t\tfont-size: 12px;\n\t}\n}\n", false),
             array('p + p { font-size: 12px; /* width: 200px; */ }', "p {\n\t&+p {\n\t\tfont-size: 12px;\n\t}\n}\n", false),
         );

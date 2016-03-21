@@ -62,18 +62,20 @@ class Css2Less
      */
     protected function extractVariables()
     {
-        $properties = ['color', 'font-family'];
+        $properties = ['color', 'font-family', 'background-color', 'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'outline-color'];
         foreach ($properties as $property) {
-            $this->variables[$property] = [];
+            $propertyName = str_replace('-', '_', $property);
+            $this->variables[$propertyName] = [];
         }
 
         foreach ($this->tokens as $token) {
             if ($token instanceof \CssRulesetDeclarationToken && in_array($token->Property, $properties)) {
-                if (!array_key_exists($token->Value, $this->variables[$token->Property])) {
-                    $this->variables[$token->Property][$token->Value] = $token->Property . '_' . (count($this->variables[$token->Property]) + 1);
+                $propertyName = str_replace('-', '_', $token->Property);
+                if (!array_key_exists($token->Value, $this->variables[$propertyName])) {
+                    $this->variables[$propertyName][$token->Value] = $propertyName . '_' . (count($this->variables[$propertyName]) + 1);
 
                 }
-                $token->Value = '@' . $this->variables[$token->Property][$token->Value];
+                $token->Value = '@' . $this->variables[$propertyName][$token->Value];
             }
         }
     }
