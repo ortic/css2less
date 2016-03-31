@@ -85,21 +85,28 @@ class LessRuleList
         return $selectorOut;
     }
 
-    protected function parseAdjacentSelect($selector)
+    /**
+     * Ensures that operators like "+" are properly combined with a "&"
+     * 
+     * @param $selector
+     * @param array $characters
+     * @return string
+     */
+    protected function parseSelectors($selector, array $characters)
     {
         $selectorOut = '';
-        $adjacentSelectorFound = false;
+        $selectorFound = false;
         for ($i = 0; $i < strlen($selector); $i++) {
             $c = $selector{$i};
-            if ($c == ' ' && $adjacentSelectorFound) {
+            if ($c == ' ' && $selectorFound) {
                 continue;
             }
             else {
-                $adjacentSelectorFound = false;
+                $selectorFound = false;
             }
-            if ($c == '+') {
+            if (in_array($c, $characters)) {
                 $selectorOut .= '&';
-                $adjacentSelectorFound = true;
+                $selectorFound = true;
             }
             $selectorOut .= $c;
         }
@@ -131,7 +138,7 @@ class LessRuleList
 
                 $selector = $this->parseDirectDescendants($selector);
                 $selector = $this->parsePseudoClasses($selector);
-                $selector = $this->parseAdjacentSelect($selector);
+                $selector = $this->parseSelectors($selector, ['+', '~']);
 
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
