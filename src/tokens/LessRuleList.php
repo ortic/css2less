@@ -142,7 +142,7 @@ class LessRuleList
 
                 // selectors like "html body" must be split into an array so we can
                 // easily nest them
-                $selectorPath = preg_split('[ ]', $selector, -1, PREG_SPLIT_NO_EMPTY);
+                $selectorPath = $this->splitSelector($selector);
                 foreach ($selectorPath as $selectorPathItem) {
                     if (!array_key_exists($selectorPathItem, $currentNode)) {
                         $currentNode[$selectorPathItem] = array();
@@ -153,6 +153,48 @@ class LessRuleList
                 $currentNode['@rules'][] = $this->formatTokenAsLess($token);
             }
         }
+    }
+
+    /**
+     * Splits CSS selectors into an array, but only where it makes sense to create a new nested level in LESS/SCSS.
+     * We split "body div" into array(body, div), but we don't split "a[title='hello world']" and thus create
+     * array([title='hello world'])
+     *
+     * @param string $selector
+     * @return array
+     */
+    protected function splitSelector($selector)
+    {
+        $selectors = [];
+
+        $currentSelector = '';
+        $quoteFound = false;
+        for ($i = 0; $i < strlen($selector); $i++) {
+            $c = $selector{$i};
+
+            if ($c === ' ' && !$quoteFound) {
+                if (trim($currentSelector) != '') {
+                    $selectors[] = trim($currentSelector);
+                    $currentSelector = '';
+                }
+            }
+
+            if ($quoteFound && in_array($c, ['"', '\''])) {
+                $quoteFound = false;
+            }
+            elseif (!$quoteFound && in_array($c, ['"', '\''])) {
+                $quoteFound = true;
+            }
+
+            $currentSelector .= $c;
+        }
+        if ($currentSelector != '') {
+            if (trim($currentSelector) != '') {
+                $selectors[] = trim($currentSelector);
+            }
+        }
+
+        return $selectors;
     }
 
     /**
