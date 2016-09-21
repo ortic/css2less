@@ -1,10 +1,11 @@
 #!/usr/bin/env php
 <?php
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 /**
  * Class Css2Less
+ * User should give correct permissions to this file: chmod 755 css2less
  */
 class Css2Less
 {
@@ -24,6 +25,11 @@ class Css2Less
     private $lessFileName = '';
 
     /**
+    * @var boolean to toggle LESS variable extraction for placement into converted file
+    */
+    private $extractVariables = false;
+
+    /**
      * @param $argv command line arguments
      */
     public function __construct($argv)
@@ -35,7 +41,6 @@ class Css2Less
 
         $this->parseArguments();
         $this->checkMandatoryArguments();
-        $this->run();
     }
 
     /**
@@ -113,6 +118,11 @@ class Css2Less
                 'mandatory' => false,
                 'assignmentTarget' => 'lessFileName',
             ),
+            '--extract' => array(
+                'explanation' => '(optional) Extract LESS variables and place them into converted file',
+                'mandatory' => false,
+                'assignmentTarget' => 'extractVariables',
+            ),
         );
     }
 
@@ -128,7 +138,7 @@ class Css2Less
 
         $cssFileContent = file_get_contents($this->cssFileName);
         $css2lessParser = new \Ortic\Css2Less\Css2Less($cssFileContent);
-        $lessOutput = $css2lessParser->getLess();
+        $lessOutput = $css2lessParser->getLess($this->extractVariables);
 
         if ($this->lessFileName == '') {
             echo $lessOutput;
@@ -140,4 +150,3 @@ class Css2Less
 }
 
 (new Css2Less($argv))->run();
-
