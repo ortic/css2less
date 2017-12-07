@@ -72,7 +72,7 @@ class LessRuleList
             $nestedPseudo = ($c === '(' || $c === '[') || $nestedPseudo;
             $nestedPseudo = !($c === ')' || $c === ']') && $nestedPseudo;
 
-            if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false) {
+            if ($nestedPseudo === false && $c === ':' && $lastCharacterColon === false && $i > 0) {
                 $selectorOut .= ' &';
                 $lastCharacterColon = true;
             }

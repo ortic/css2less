@@ -28,6 +28,7 @@ class Css2LessTest extends PHPUnit_Framework_TestCase
             array('p + p { font-size: 12px; /* width: 200px; */ }', "p {\n\t&+p {\n\t\tfont-size: 12px;\n\t}\n}\n", false),
             array('a ~ p { font-size: 12px; }', "a {\n\t&~p {\n\t\tfont-size: 12px;\n\t}\n}\n", false),
             array('a div[title="a b"] { font-size: 12px; }', "a {\n\tdiv[title=\"a b\"] {\n\t\tfont-size: 12px;\n\t}\n}\n", false),
+            array(':not(a) { text-decoration: none; }', ":not(a) {\n\ttext-decoration: none;\n}\n", false),
         );
     }
 
