@@ -223,6 +223,8 @@ class LessRuleList
             return "@font-face {";
         } elseif ($token instanceof \CssAtFontFaceDeclarationToken) {
             return $indentation . "\t" . $token->Property . ": " . $token->Value . ($token->IsImportant ? " !important" : "") . ($token->IsLast ? "" : ";");
+        } elseif ($token instanceof \CssCommentToken) {
+            return;
         } else {
             return $indentation . $token;
         }

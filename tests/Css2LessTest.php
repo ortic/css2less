@@ -49,7 +49,7 @@ class Css2LessTest extends PHPUnit_Framework_TestCase
     {
         $cssContent = <<<EOF
 @charset "utf-8";
-
+/* test comment */
 @font-face {
   font-family: "CrassRoots";
   src: url("../media/cr.ttf")
@@ -85,6 +85,7 @@ EOF;
 
         $lessContent = <<<EOF
 @charset "utf-8";
+
 @font-face {
 	font-family: "CrassRoots";
 	src: url("../media/cr.ttf");
